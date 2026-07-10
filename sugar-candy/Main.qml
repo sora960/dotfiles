@@ -1,4 +1,4 @@
-// Custom Edgerunner Unified HUD Interface
+// Custom Edgerunner Unified HUD Interface - Resolved Session Index Tracking
 import QtQuick 2.15
 import QtMultimedia 5.15
 import QtQuick.Layouts 1.15
@@ -48,7 +48,7 @@ Pane {
         Item {
             id: tacticalContainer
             width: 360
-            height: 440
+            height: 460
             anchors.left: parent.left
             anchors.leftMargin: 90
             anchors.verticalCenter: parent.verticalCenter
@@ -188,7 +188,7 @@ Pane {
                             border.color: password.activeFocus ? config.AccentColor : "#334155"
                             border.width: password.activeFocus ? 2 : 1
                         }
-                        onAccepted: if (username.text !== "" && password.text !== "") sddm.login(username.text, password.text, 0)
+                        onAccepted: if (username.text !== "" && password.text !== "") sddm.login(username.text, password.text, sessionModel.lastIndex)
                         KeyNavigation.down: revealSecret
                     }
 
@@ -237,7 +237,7 @@ Pane {
                             color: loginButton.hovered ? Qt.lighter(config.AccentColor, 1.1) : config.AccentColor
                             opacity: loginButton.enabled ? 1.0 : 0.4
                         }
-                        onClicked: sddm.login(username.text, password.text, 0)
+                        onClicked: sddm.login(username.text, password.text, sessionModel.lastIndex)
                     }
                 }
             }
