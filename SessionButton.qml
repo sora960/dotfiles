@@ -3,25 +3,23 @@ import QtQuick.Controls 2.15
 
 Item {
     id: sessionButton
-    height: 40
+    height: 38
     width: parent.width
-    anchors.horizontalCenter: parent.horizontalCenter
 
     property var selectedSession: selectSession.currentIndex
     property string textConstantSession
-    property int loginButtonWidth
-    property Control exposeSession: selectSession
+    property var exposeSession: selectSession
 
     ComboBox {
         id: selectSession
         anchors.fill: parent
         hoverEnabled: true
         model: sessionModel
-        currentIndex: model.lastIndex
+        currentIndex: sessionModel.lastIndex
         textRole: "name"
 
-        // The Dropdown Session List Panel Setup
         popup: Popup {
+            id: sessionPopup
             y: parent.height
             width: parent.width
             implicitHeight: contentItem.implicitHeight
@@ -42,10 +40,9 @@ Item {
             }
         }
 
-        // Dropdown Entry Rows Formatting
         delegate: ItemDelegate {
             width: parent.width
-            height: 40
+            height: 38
             hoverEnabled: true
             
             contentItem: Text {
@@ -64,7 +61,6 @@ Item {
             }
         }
 
-        // Selected Interface Display Styling
         contentItem: Text {
             text: "SYS.INTERFACE // " + selectSession.currentText.toUpperCase()
             font.family: config.Font
@@ -89,10 +85,6 @@ Item {
             width: 10
             height: 6
             contextType: "2d"
-            connections: {
-                target: selectSession
-                onPopupVisibleChanged: canvas.requestPaint()
-            }
             onPaint: {
                 context.reset();
                 context.moveTo(0, 0);
@@ -102,6 +94,12 @@ Item {
                 context.fillStyle = selectSession.hovered ? config.AccentColor : "#64748b";
                 context.fill();
             }
+        }
+
+        Connections {
+            target: selectSession.popup
+            function onOpened() { canvas.requestPaint() }
+            function onClosed() { canvas.requestPaint() }
         }
     }
 }
