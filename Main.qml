@@ -51,24 +51,43 @@ Pane {
             width: 360
             height: 560
             anchors.left: parent.left
-            anchors.leftMargin: 90
+            anchors.leftMargin: 90 + shakeOffset
             anchors.verticalCenter: parent.verticalCenter
             z: 2
+
+            // Auth Fail State Properties
+            property bool loginFailed: false
+            property int shakeOffset: 0
+
+            SequentialAnimation {
+                id: glitchShake
+                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: -12; duration: 40; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: 16; duration: 40; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: -8; duration: 40; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: 6; duration: 30; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: 0; duration: 30; easing.type: Easing.InOutQuad }
+            }
+
+            Timer {
+                id: resetFail
+                interval: 2000
+                onTriggered: tacticalContainer.loginFailed = false
+            }
 
             // Top Asymmetric Header Block
             Rectangle {
                 id: headerBar
                 width: parent.width
                 height: 28
-                color: config.AccentColor
+                color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
                 anchors.top: parent.top
 
                 Text {
-                    text: "01  DATA_LINK_ESTABLISHED"
+                    text: tacticalContainer.loginFailed ? "01  CRITICAL_ERR // ACCESS_DENIED" : "01  DATA_LINK_ESTABLISHED"
                     font.family: config.Font
                     font.bold: true
                     font.pixelSize: 10
-                    color: "#0b0f19"
+                    color: tacticalContainer.loginFailed ? "#ffffff" : "#0b0f19"
                     anchors.left: parent.left
                     anchors.leftMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
@@ -78,7 +97,7 @@ Pane {
                     text: "SYS.INIT"
                     font.family: config.Font
                     font.pixelSize: 9
-                    color: "#0b0f19"
+                    color: tacticalContainer.loginFailed ? "#ffffff" : "#0b0f19"
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
@@ -92,12 +111,12 @@ Pane {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 color: "#dd0b0f19"
-                border.color: config.AccentColor
+                border.color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
                 border.width: 1
 
                 // Bottom Corner Accent Marks
-                Rectangle { width: 16; height: 3; color: config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
-                Rectangle { width: 3; height: 16; color: config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
+                Rectangle { width: 16; height: 3; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
+                Rectangle { width: 3; height: 16; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
 
                 // --- INTERNAL HUD ELEMENTS CONTAINER ---
                 Column {
@@ -163,7 +182,7 @@ Pane {
                         color: root.palette.text
                         background: Rectangle {
                             color: "#111622"
-                            border.color: username.activeFocus ? config.AccentColor : "#334155"
+                            border.color: username.activeFocus ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                             border.width: username.activeFocus ? 2 : 1
                         }
                         KeyNavigation.down: password
@@ -186,7 +205,7 @@ Pane {
                         color: root.palette.text
                         background: Rectangle {
                             color: "#111622"
-                            border.color: password.activeFocus ? config.AccentColor : "#334155"
+                            border.color: password.activeFocus ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                             border.width: password.activeFocus ? 2 : 1
                         }
                         onAccepted: if (username.text !== "" && password.text !== "") sddm.login(username.text, password.text, sessionSelector.selectedSession)
@@ -203,17 +222,17 @@ Pane {
                             id: indicatorBox
                             implicitHeight: 12; implicitWidth: 12
                             color: "#111622"
-                            border.color: revealSecret.activeFocus || revealSecret.hovered ? config.AccentColor : "#334155"
+                            border.color: revealSecret.activeFocus || revealSecret.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                             anchors.verticalCenter: parent.verticalCenter
                             Rectangle {
-                                anchors.centerIn: parent; implicitHeight: 6; implicitWidth: 6; color: config.AccentColor
+                                anchors.centerIn: parent; implicitHeight: 6; implicitWidth: 6; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
                                 visible: revealSecret.checked
                             }
                         }
                         contentItem: Text {
                             text: config.TranslateShowPassword || "SHOW PASSWORD"
                             font.family: config.Font; font.pixelSize: 9
-                            color: revealSecret.hovered ? config.AccentColor : "#64748b"
+                            color: revealSecret.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
                             anchors.left: indicatorBox.right; anchors.leftMargin: 6; anchors.verticalCenter: indicatorBox.verticalCenter
                         }
                         KeyNavigation.down: loginButton
@@ -235,7 +254,7 @@ Pane {
                             horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
                         }
                         background: Rectangle {
-                            color: loginButton.hovered ? Qt.lighter(config.AccentColor, 1.1) : config.AccentColor
+                            color: loginButton.hovered ? Qt.lighter(tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor, 1.1) : (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor)
                             opacity: loginButton.enabled ? 1.0 : 0.4
                         }
                         onClicked: sddm.login(username.text, password.text, sessionSelector.selectedSession)
@@ -263,13 +282,13 @@ Pane {
                                 font.family: config.Font
                                 font.pixelSize: 9
                                 font.bold: true
-                                color: parent.hovered ? config.AccentColor : "#64748b"
+                                color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                             }
                             background: Rectangle {
                                 color: "#111622"
-                                border.color: parent.hovered ? config.AccentColor : "#334155"
+                                border.color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                                 border.width: parent.hovered ? 2 : 1
                             }
                         }
@@ -286,19 +305,28 @@ Pane {
                                 font.family: config.Font
                                 font.pixelSize: 9
                                 font.bold: true
-                                color: parent.hovered ? config.AccentColor : "#64748b"
+                                color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                             }
                             background: Rectangle {
                                 color: "#111622"
-                                border.color: parent.hovered ? config.AccentColor : "#334155"
+                                border.color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                                 border.width: parent.hovered ? 2 : 1
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    Connections {
+        target: sddm
+        function onLoginFailed() {
+            tacticalContainer.loginFailed = true
+            tacticalContainer.glitchShake.start()
+            tacticalContainer.resetFail.start()
         }
     }
 }
