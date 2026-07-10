@@ -1,4 +1,4 @@
-// Custom Edgerunner Unified HUD Interface - Resolved Session Index Tracking
+// Custom Edgerunner Unified HUD Interface - Telemetry-Complete Diagnostic Build
 import QtQuick 2.15
 import QtMultimedia 5.15
 import QtQuick.Layouts 1.15
@@ -34,7 +34,6 @@ Pane {
             loops: MediaPlayer.Infinite
             autoPlay: true
             volume: 0.0
-            Component.onCompleted: bgVideo.play()
         }
 
         Rectangle {
@@ -51,27 +50,48 @@ Pane {
             width: 360
             height: 560
             anchors.left: parent.left
-            anchors.leftMargin: 90 + shakeOffset
+            anchors.leftMargin: 90
             anchors.verticalCenter: parent.verticalCenter
             z: 2
 
             // Auth Fail State Properties
             property bool loginFailed: false
-            property int shakeOffset: 0
+
+            // Hardware Accelerated Transform Matrix for Visual Displacement
+            transform: Translate {
+                id: glitchTranslate
+                x: 0
+                // Telemetry: Log the exact transform matrix value changes directly to stdout
+                onXChanged: console.log("TELEMETRY // glitchTranslate.x shifted to:", x)
+            }
 
             SequentialAnimation {
                 id: glitchShake
-                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: -12; duration: 40; easing.type: Easing.InOutQuad }
-                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: 16; duration: 40; easing.type: Easing.InOutQuad }
-                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: -8; duration: 40; easing.type: Easing.InOutQuad }
-                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: 6; duration: 30; easing.type: Easing.InOutQuad }
-                NumberAnimation { target: tacticalContainer; property: "shakeOffset"; to: 0; duration: 30; easing.type: Easing.InOutQuad }
+                
+                // Track execution state changes straight to stdout
+                onRunningChanged: console.log("DIAGNOSTIC // glitchShake running state changed to:", running)
+
+                NumberAnimation { target: glitchTranslate; property: "x"; to: -60; duration: 80; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: 60; duration: 80; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: -40; duration: 60; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: 30; duration: 60; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: -10; duration: 40; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: 0; duration: 20; easing.type: Easing.InOutQuad }
+
+                onStopped: glitchTranslate.x = 0
             }
 
             Timer {
                 id: resetFail
                 interval: 2000
+                repeat: false
                 onTriggered: tacticalContainer.loginFailed = false
+            }
+
+            // Exaggerated Instant Boot Diagnostic Hook + Lifecycle Log
+            Component.onCompleted: {
+                console.log("DIAGNOSTIC // Component instantiation completed successfully.")
+                glitchShake.restart()
             }
 
             // Top Asymmetric Header Block
@@ -325,8 +345,9 @@ Pane {
         target: sddm
         function onLoginFailed() {
             tacticalContainer.loginFailed = true
-            tacticalContainer.glitchShake.start()
-            tacticalContainer.resetFail.start()
+            glitchShake.restart()
+            resetFail.stop()
+            resetFail.start()
         }
     }
 }
