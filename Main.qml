@@ -49,7 +49,7 @@ Pane {
         Item {
             id: tacticalContainer
             width: 360
-            height: 510
+            height: 560
             anchors.left: parent.left
             anchors.leftMargin: 90
             anchors.verticalCenter: parent.verticalCenter
@@ -244,6 +244,58 @@ Pane {
                     // Embedded Tactical Session Picker Dropdown
                     LucyComp.SessionButton {
                         id: sessionSelector
+                    }
+
+                    // Power Actions Row
+                    Row {
+                        width: parent.width
+                        spacing: 8
+
+                        Button {
+                            width: (parent.width - 8) / 2
+                            height: 32
+                            text: "REBOOT"
+                            hoverEnabled: true
+                            onClicked: sddm.reboot()
+
+                            contentItem: Text {
+                                text: parent.text
+                                font.family: config.Font
+                                font.pixelSize: 9
+                                font.bold: true
+                                color: parent.hovered ? config.AccentColor : "#64748b"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                color: "#111622"
+                                border.color: parent.hovered ? config.AccentColor : "#334155"
+                                border.width: parent.hovered ? 2 : 1
+                            }
+                        }
+
+                        Button {
+                            width: (parent.width - 8) / 2
+                            height: 32
+                            text: "SHUTDOWN"
+                            hoverEnabled: true
+                            onClicked: sddm.powerOff()
+
+                            contentItem: Text {
+                                text: parent.text
+                                font.family: config.Font
+                                font.pixelSize: 9
+                                font.bold: true
+                                color: parent.hovered ? config.AccentColor : "#64748b"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                color: "#111622"
+                                border.color: parent.hovered ? config.AccentColor : "#334155"
+                                border.width: parent.hovered ? 2 : 1
+                            }
+                        }
                     }
                 }
             }
