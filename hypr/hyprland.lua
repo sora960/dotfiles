@@ -37,8 +37,8 @@ hl.monitor({
 
 -- Set programs that you use
 local terminal    = "kitty"
-local fileManager = "dolphin"
-local menu        = "hyprlauncher"
+local fileManager = "thunar"
+local menu        = "fuzzel"
 local browser 	  = "firefox"
 
 -------------------
@@ -63,8 +63,8 @@ local browser 	  = "firefox"
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
-hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
+hl.env("XCURSOR_SIZE", "12")
+hl.env("HYPRCURSOR_SIZE", "12")
 
 
 -----------------------
@@ -226,7 +226,7 @@ hl.config({
 hl.config({
     input = {
         kb_layout  = "us",
-        kb_variant = "",
+        kb_variant = "altgr-intl",
         kb_model   = "",
         kb_options = "",
         kb_rules   = "",
@@ -275,6 +275,7 @@ hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 
 hl.bind("Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("grim - | wl-copy"))
+hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.local/bin/screen-record.sh"))
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
