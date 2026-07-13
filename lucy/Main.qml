@@ -1,8 +1,8 @@
-// Custom Edgerunner Unified HUD Interface - Resolved Session Index Tracking
 import QtQuick 2.15
 import QtMultimedia 5.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import "Components" as LucyComp
 
 Pane {
     id: root
@@ -33,7 +33,6 @@ Pane {
             loops: MediaPlayer.Infinite
             autoPlay: true
             volume: 0.0
-            Component.onCompleted: bgVideo.play()
         }
 
         Rectangle {
@@ -48,26 +47,50 @@ Pane {
         Item {
             id: tacticalContainer
             width: 360
-            height: 460
+            height: 560
             anchors.left: parent.left
             anchors.leftMargin: 90
             anchors.verticalCenter: parent.verticalCenter
             z: 2
 
-            // Top Asymmetric Header Block
+            property bool loginFailed: false
+
+            transform: Translate {
+                id: glitchTranslate
+                x: 0
+            }
+
+            SequentialAnimation {
+                id: glitchShake
+                NumberAnimation { target: glitchTranslate; property: "x"; to: -16; duration: 40; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: 20; duration: 40; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: -12; duration: 40; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: 8; duration: 30; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: -4; duration: 30; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: glitchTranslate; property: "x"; to: 0; duration: 20; easing.type: Easing.InOutQuad }
+                onStopped: glitchTranslate.x = 0
+            }
+
+            Timer {
+                id: resetFail
+                interval: 2000
+                repeat: false
+                onTriggered: tacticalContainer.loginFailed = false
+            }
+
             Rectangle {
                 id: headerBar
                 width: parent.width
                 height: 28
-                color: config.AccentColor
+                color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
                 anchors.top: parent.top
 
                 Text {
-                    text: "01  DATA_LINK_ESTABLISHED"
+                    text: tacticalContainer.loginFailed ? "01  CRITICAL_ERR // ACCESS_DENIED" : "01  DATA_LINK_ESTABLISHED"
                     font.family: config.Font
                     font.bold: true
                     font.pixelSize: 10
-                    color: "#0b0f19"
+                    color: tacticalContainer.loginFailed ? "#ffffff" : "#0b0f19"
                     anchors.left: parent.left
                     anchors.leftMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
@@ -77,34 +100,30 @@ Pane {
                     text: "SYS.INIT"
                     font.family: config.Font
                     font.pixelSize: 9
-                    color: "#0b0f19"
+                    color: tacticalContainer.loginFailed ? "#ffffff" : "#0b0f19"
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
 
-            // High-Tech Outer Wireframe Box
             Rectangle {
                 anchors.top: headerBar.bottom
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 color: "#dd0b0f19"
-                border.color: config.AccentColor
+                border.color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
                 border.width: 1
 
-                // Bottom Corner Accent Marks
-                Rectangle { width: 16; height: 3; color: config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
-                Rectangle { width: 3; height: 16; color: config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
+                Rectangle { width: 16; height: 3; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
+                Rectangle { width: 3; height: 16; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
 
-                // --- INTERNAL HUD ELEMENTS CONTAINER ---
                 Column {
                     anchors.fill: parent
                     anchors.margins: 28
                     spacing: 16
 
-                    // Header Status
                     Text {
                         text: "LOGIN_REQUIRED"
                         font.family: config.Font
@@ -114,7 +133,6 @@ Pane {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    // System Clock & Date Matrix
                     Column {
                         width: parent.width
                         spacing: 2
@@ -144,10 +162,8 @@ Pane {
                         }
                     }
 
-                    // Spacer
-                    Item { width: 1; height: 10 }
+                    Item { width: 1; height: 4 }
 
-                    // USER_ID Input
                     TextField {
                         id: username
                         width: parent.width
@@ -162,13 +178,14 @@ Pane {
                         color: root.palette.text
                         background: Rectangle {
                             color: "#111622"
-                            border.color: username.activeFocus ? config.AccentColor : "#334155"
+                            border.color: username.activeFocus ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                             border.width: username.activeFocus ? 2 : 1
                         }
+
+                        KeyNavigation.up: shutdownButton
                         KeyNavigation.down: password
                     }
 
-                    // PASSWORD Input
                     TextField {
                         id: password
                         width: parent.width
@@ -185,14 +202,15 @@ Pane {
                         color: root.palette.text
                         background: Rectangle {
                             color: "#111622"
-                            border.color: password.activeFocus ? config.AccentColor : "#334155"
+                            border.color: password.activeFocus ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                             border.width: password.activeFocus ? 2 : 1
                         }
-                        onAccepted: if (username.text !== "" && password.text !== "") sddm.login(username.text, password.text, sessionModel.lastIndex)
+                        onAccepted: if (username.text !== "" && password.text !== "") sddm.login(username.text, password.text, sessionSelector.selectedSession)
+                        
+                        KeyNavigation.up: username
                         KeyNavigation.down: revealSecret
                     }
 
-                    // Reveal Secret Checkbox Row
                     CheckBox {
                         id: revealSecret
                         width: parent.width
@@ -202,23 +220,25 @@ Pane {
                             id: indicatorBox
                             implicitHeight: 12; implicitWidth: 12
                             color: "#111622"
-                            border.color: revealSecret.activeFocus || revealSecret.hovered ? config.AccentColor : "#334155"
+                            border.color: revealSecret.activeFocus || revealSecret.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
                             anchors.verticalCenter: parent.verticalCenter
                             Rectangle {
-                                anchors.centerIn: parent; implicitHeight: 6; implicitWidth: 6; color: config.AccentColor
+                                anchors.centerIn: parent; implicitHeight: 6; implicitWidth: 6; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
                                 visible: revealSecret.checked
                             }
                         }
                         contentItem: Text {
                             text: config.TranslateShowPassword || "SHOW PASSWORD"
                             font.family: config.Font; font.pixelSize: 9
-                            color: revealSecret.hovered ? config.AccentColor : "#64748b"
+                            color: revealSecret.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
                             anchors.left: indicatorBox.right; anchors.leftMargin: 6; anchors.verticalCenter: indicatorBox.verticalCenter
                         }
-                        KeyNavigation.down: loginButton
+                        
+                        KeyNavigation.up: password
+                        // Skip loginButton on down press if it's currently disabled
+                        KeyNavigation.down: loginButton.enabled ? loginButton : sessionSelector.exposeSession
                     }
 
-                    // AUTHORIZE Action Bar
                     Button {
                         id: loginButton
                         width: parent.width
@@ -234,13 +254,94 @@ Pane {
                             horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
                         }
                         background: Rectangle {
-                            color: loginButton.hovered ? Qt.lighter(config.AccentColor, 1.1) : config.AccentColor
+                            color: loginButton.hovered ? Qt.lighter(tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor, 1.1) : (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor)
                             opacity: loginButton.enabled ? 1.0 : 0.4
                         }
-                        onClicked: sddm.login(username.text, password.text, sessionModel.lastIndex)
+                        onClicked: sddm.login(username.text, password.text, sessionSelector.selectedSession)
+                        
+                        KeyNavigation.up: revealSecret
+                        KeyNavigation.down: sessionSelector.exposeSession
+                    }
+
+                    LucyComp.SessionButton {
+                        id: sessionSelector
+
+                        // Dynamically route upward focus: skip loginButton if it is disabled
+                        navigationUp: loginButton.enabled ? loginButton : revealSecret
+                        navigationDown: rebootButton
+                    }
+
+                    Row {
+                        width: parent.width
+                        spacing: 8
+
+                        Button {
+                            id: rebootButton
+                            width: (parent.width - 8) / 2
+                            height: 32
+                            text: "REBOOT"
+                            hoverEnabled: true
+                            onClicked: sddm.reboot()
+
+                            contentItem: Text {
+                                text: parent.text
+                                font.family: config.Font
+                                font.pixelSize: 9
+                                font.bold: true
+                                color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                color: "#111622"
+                                border.color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
+                                border.width: parent.hovered ? 2 : 1
+                            }
+
+                            KeyNavigation.up: sessionSelector.exposeSession
+                            KeyNavigation.down: username
+                            KeyNavigation.right: shutdownButton
+                        }
+
+                        Button {
+                            id: shutdownButton
+                            width: (parent.width - 8) / 2
+                            height: 32
+                            text: "SHUTDOWN"
+                            hoverEnabled: true
+                            onClicked: sddm.powerOff()
+
+                            contentItem: Text {
+                                text: parent.text
+                                font.family: config.Font
+                                font.pixelSize: 9
+                                font.bold: true
+                                color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                color: "#111622"
+                                border.color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
+                                border.width: parent.hovered ? 2 : 1
+                            }
+
+                            KeyNavigation.up: sessionSelector.exposeSession
+                            KeyNavigation.down: username
+                            KeyNavigation.left: rebootButton
+                        }
                     }
                 }
             }
+        }
+    }
+
+    Connections {
+        target: sddm
+        function onLoginFailed() {
+            tacticalContainer.loginFailed = true
+            glitchShake.restart()
+            resetFail.restart()
         }
     }
 }

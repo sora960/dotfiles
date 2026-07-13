@@ -1,194 +1,127 @@
-//
-// This file is part of SDDM Sugar Candy.
-// A theme for the Simple Display Desktop Manager.
-//
-// Copyright (C) 2018–2020 Marian Arlt
-//
-// SDDM Sugar Candy is free software: you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the
-// Free Software Foundation, either version 3 of the License, or any later version.
-//
-// You are required to preserve this and any additional legal notices, either
-// contained in this file or in other files that you received along with
-// SDDM Sugar Candy that refer to the author(s) in accordance with
-// sections §4, §5 and specifically §7b of the GNU General Public License.
-//
-// SDDM Sugar Candy is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with SDDM Sugar Candy. If not, see <https://www.gnu.org/licenses/>
-//
-
-import QtQuick 2.11
-import QtQuick.Controls 2.4
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 Item {
     id: sessionButton
-    height: root.font.pointSize
-    width: parent.width / 2
-    anchors.horizontalCenter: parent.horizontalCenter
+    height: 38
+    width: parent.width
 
-    property var selectedSession: selectSession.currentIndex
-    property string textConstantSession
-    property int loginButtonWidth
-    property Control exposeSession: selectSession
+    property int selectedSession: selectSession.currentIndex
+    property alias exposeSession: selectSession
+
+    property Item navigationUp
+    property Item navigationDown
 
     ComboBox {
         id: selectSession
+        anchors.fill: parent
 
         hoverEnabled: true
-        anchors.left: parent.left
-        Keys.onPressed: {
-            if (event.key == Qt.Key_Up && loginButton.state != "enabled" && !popup.opened)
-                revealSecret.focus = true,
-                revealSecret.state = "focused",
-                currentIndex = currentIndex + 1;
-            if (event.key == Qt.Key_Up && loginButton.state == "enabled" && !popup.opened)
-                loginButton.focus = true,
-                loginButton.state = "focused",
-                currentIndex = currentIndex + 1;
-            if (event.key == Qt.Key_Down && !popup.opened)
-                systemButtons.children[0].focus = true,
-                systemButtons.children[0].state = "focused",
-                currentIndex = currentIndex - 1;
-            if ((event.key == Qt.Key_Left || event.key == Qt.Key_Right) && !popup.opened)
-                popup.open();
-        }
-
         model: sessionModel
-        currentIndex: model.lastIndex
+        currentIndex: sessionModel.lastIndex
         textRole: "name"
 
-        delegate: ItemDelegate {
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
-            contentItem: Text {
-                text: model.name
-                font.pointSize: root.font.pointSize * 0.8
-                color: selectSession.highlightedIndex === index ? root.palette.highlight.hslLightness >= 0.7 ? "#444444" : "white" : root.palette.window.hslLightness >= 0.8 ? root.palette.highlight.hslLightness >= 0.8 ? "#444444" : root.palette.highlight : "white"
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
-            highlighted: parent.highlightedIndex === index
-            background: Rectangle {
-                color: selectSession.highlightedIndex === index ? root.palette.highlight : "transparent"
+        // Natively intercept keys inside the active focus element
+        Keys.onUpPressed: {
+            if (!selectSession.popup.visible && sessionButton.navigationUp) {
+                sessionButton.navigationUp.forceActiveFocus()
+                event.accepted = true
+            } else {
+                event.accepted = false
             }
         }
 
-        indicator {
-            visible: false
-        }
-
-        contentItem: Text {
-            id: displayedItem
-            text: (config.TranslateSession || (textConstantSession + ":")) + " " + selectSession.currentText
-            color: root.palette.text
-            verticalAlignment: Text.AlignVCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 3
-            font.pointSize: root.font.pointSize * 0.8
-            Keys.onReleased: parent.popup.open()
-        }
-
-        background: Rectangle {
-            color: "transparent"
-            border.width: parent.visualFocus ? 1 : 0
-            border.color: "transparent"
-            height: parent.visualFocus ? 2 : 0
-            width: displayedItem.implicitWidth
-            anchors.top: parent.bottom
-            anchors.left: parent.left
-            anchors.leftMargin: 3
+        Keys.onDownPressed: {
+            if (!selectSession.popup.visible && sessionButton.navigationDown) {
+                sessionButton.navigationDown.forceActiveFocus()
+                event.accepted = true
+            } else {
+                event.accepted = false
+            }
         }
 
         popup: Popup {
-            id: popupHandler
-            y: parent.height - 1
-            x: config.ForceRightToLeft == "true" ? -loginButtonWidth + displayedItem.width : 0
-            width: sessionButton.width
+            id: sessionPopup
+            y: parent.height
+            width: parent.width
             implicitHeight: contentItem.implicitHeight
-            padding: 10
+            padding: 0
 
             contentItem: ListView {
                 clip: true
-                implicitHeight: contentHeight + 20
+                implicitHeight: contentHeight
                 model: selectSession.popup.visible ? selectSession.delegateModel : null
                 currentIndex: selectSession.highlightedIndex
-                ScrollIndicator.vertical: ScrollIndicator { }
             }
 
             background: Rectangle {
-                radius: config.RoundCorners / 2
-                color: config.BackgroundColor
-                layer.enabled: true
-                layer.effect: DropShadow {
-                    transparentBorder: true
-                    horizontalOffset: 0
-                    verticalOffset: 0
-                    radius: 20 * config.InterfaceShadowSize
-                    samples: 41 * config.InterfaceShadowSize
-                    cached: true
-                    color: Qt.hsla(0,0,0,config.InterfaceShadowOpacity)
-                }
-            }
-
-            enter: Transition {
-                NumberAnimation { property: "opacity"; from: 0; to: 1 }
+                color: "#111622"
+                border.color: "#334155"
+                border.width: 1
+                radius: 0
             }
         }
 
-        states: [
-            State {
-                name: "pressed"
-                when: selectSession.down
-                PropertyChanges {
-                    target: displayedItem
-                    color: Qt.darker(root.palette.highlight, 1.1)
-                }
-                PropertyChanges {
-                    target: selectSession.background
-                    border.color: Qt.darker(root.palette.highlight, 1.1)
-                }
-            },
-            State {
-                name: "hovered"
-                when: selectSession.hovered
-                PropertyChanges {
-                    target: displayedItem
-                    color: Qt.lighter(root.palette.highlight, 1.1)
-                }
-                PropertyChanges {
-                    target: selectSession.background
-                    border.color: Qt.lighter(root.palette.highlight, 1.1)
-                }
-            },
-            State {
-                name: "focused"
-                when: selectSession.visualFocus
-                PropertyChanges {
-                    target: displayedItem
-                    color: root.palette.highlight
-                }
-                PropertyChanges {
-                    target: selectSession.background
-                    border.color: root.palette.highlight
-                }
+        delegate: ItemDelegate {
+            width: parent.width
+            height: 38
+            hoverEnabled: true
+            
+            contentItem: Text {
+                text: model.name.toUpperCase()
+                font.family: config.Font
+                font.pointSize: 9
+                font.bold: true
+                color: selectSession.highlightedIndex === index ? "#0b0f19" : "#94a3b8"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
-        ]
 
-        transitions: [
-            Transition {
-                PropertyAnimation {
-                    properties: "color, border.color"
-                    duration: 150
-                }
+            background: Rectangle {
+                color: selectSession.highlightedIndex === index ? config.AccentColor : "transparent"
+                radius: 0
             }
-        ]
+        }
 
+        contentItem: Text {
+            text: "SYS.INTERFACE // " + selectSession.currentText.toUpperCase()
+            font.family: config.Font
+            font.pointSize: 9
+            font.bold: true
+            color: "#94a3b8"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        background: Rectangle {
+            color: "#111622"
+            border.color: selectSession.activeFocus || selectSession.hovered ? config.AccentColor : "#334155"
+            border.width: selectSession.activeFocus || selectSession.hovered ? 2 : 1
+            radius: 0
+        }
+
+        indicator: Canvas {
+            id: canvas
+            x: selectSession.width - width - 15
+            y: (selectSession.height - height) / 2
+            width: 10
+            height: 6
+            contextType: "2d"
+            onPaint: {
+                context.reset();
+                context.moveTo(0, 0);
+                context.lineTo(width, 0);
+                context.lineTo(width / 2, height);
+                context.closePath();
+                context.fillStyle = selectSession.hovered ? config.AccentColor : "#64748b";
+                context.fill();
+            }
+        }
+
+        Connections {
+            target: selectSession.popup
+            function onOpened() { canvas.requestPaint() }
+            function onClosed() { canvas.requestPaint() }
+        }
     }
-
 }
