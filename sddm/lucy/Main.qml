@@ -43,7 +43,6 @@ Pane {
             z: 1
         }
 
-        // --- TACTICAL EDGE HUD LAYOUT ---
         Item {
             id: tacticalContainer
             width: 360
@@ -116,8 +115,15 @@ Pane {
                 border.color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
                 border.width: 1
 
+                // Four-Corner Accents
                 Rectangle { width: 16; height: 3; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
                 Rectangle { width: 3; height: 16; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.left: parent.left }
+                Rectangle { width: 16; height: 3; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.right: parent.right }
+                Rectangle { width: 3; height: 16; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.bottom: parent.bottom; anchors.right: parent.right }
+                Rectangle { width: 16; height: 3; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.top: parent.top; anchors.left: parent.left }
+                Rectangle { width: 3; height: 16; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.top: parent.top; anchors.left: parent.left }
+                Rectangle { width: 16; height: 3; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.top: parent.top; anchors.right: parent.right }
+                Rectangle { width: 3; height: 16; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor; anchors.top: parent.top; anchors.right: parent.right }
 
                 Column {
                     anchors.fill: parent
@@ -133,110 +139,24 @@ Pane {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    Column {
-                        width: parent.width
-                        spacing: 2
-                        
-                        Text {
-                            id: timeText
-                            text: Qt.formatTime(new Date(), config.HourFormat || "HH:mm")
-                            font.family: config.Font
-                            font.pixelSize: 32
-                            color: root.palette.text
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-                        Text {
-                            id: dateText
-                            text: Qt.formatDate(new Date(), config.DateFormat || "yyyy-MM-dd")
-                            font.family: config.Font
-                            font.pixelSize: 11
-                            color: "#64748b"
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-                        Timer {
-                            interval: 1000; running: true; repeat: true
-                            onTriggered: {
-                                timeText.text = Qt.formatTime(new Date(), config.HourFormat || "HH:mm")
-                                dateText.text = Qt.formatDate(new Date(), config.DateFormat || "yyyy-MM-dd")
-                            }
-                        }
+                    LucyComp.Clock {
+                        id: clockModule
                     }
 
                     Item { width: 1; height: 4 }
 
-                    TextField {
-                        id: username
-                        width: parent.width
-                        height: 38
-                        text: userModel.lastUser
-                        font.family: config.Font
-                        font.pixelSize: 11
-                        placeholderText: config.TranslatePlaceholderUsername || "USER_ID"
-                        selectByMouse: true
-                        horizontalAlignment: TextInput.AlignHCenter
-                        verticalAlignment: TextInput.AlignVCenter
-                        color: root.palette.text
-                        background: Rectangle {
-                            color: "#111622"
-                            border.color: username.activeFocus ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
-                            border.width: username.activeFocus ? 2 : 1
-                        }
-
-                        KeyNavigation.up: shutdownButton
-                        KeyNavigation.down: password
-                    }
-
-                    TextField {
-                        id: password
-                        width: parent.width
-                        height: 38
-                        font.family: config.Font
-                        font.pixelSize: 11
-                        focus: config.ForcePasswordFocus == "true"
-                        placeholderText: config.TranslatePlaceholderPassword || "PASSWORD"
-                        selectByMouse: true
-                        echoMode: revealSecret.checked ? TextInput.Normal : TextInput.Password
-                        horizontalAlignment: TextInput.AlignHCenter
-                        verticalAlignment: TextInput.AlignVCenter
-                        passwordCharacter: "•"
-                        color: root.palette.text
-                        background: Rectangle {
-                            color: "#111622"
-                            border.color: password.activeFocus ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
-                            border.width: password.activeFocus ? 2 : 1
-                        }
-                        onAccepted: if (username.text !== "" && password.text !== "") sddm.login(username.text, password.text, sessionSelector.selectedSession)
+                    LucyComp.UserInputs {
+                        id: userInputsModule
+                        loginFailed: tacticalContainer.loginFailed
                         
-                        KeyNavigation.up: username
-                        KeyNavigation.down: revealSecret
-                    }
+                        // Link precisely to the buttons
+                        navUp: systemControlsModule.shutdownBtn
+                        navDown: loginButton.enabled ? loginButton : sessionSelector.exposeSession
 
-                    CheckBox {
-                        id: revealSecret
-                        width: parent.width
-                        height: 20
-                        
-                        indicator: Rectangle {
-                            id: indicatorBox
-                            implicitHeight: 12; implicitWidth: 12
-                            color: "#111622"
-                            border.color: revealSecret.activeFocus || revealSecret.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
-                            anchors.verticalCenter: parent.verticalCenter
-                            Rectangle {
-                                anchors.centerIn: parent; implicitHeight: 6; implicitWidth: 6; color: tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor
-                                visible: revealSecret.checked
-                            }
+                        onAccepted: {
+                            if (usernameText !== "" && passwordText !== "")
+                                sddm.login(usernameText, passwordText, sessionSelector.selectedSession)
                         }
-                        contentItem: Text {
-                            text: config.TranslateShowPassword || "SHOW PASSWORD"
-                            font.family: config.Font; font.pixelSize: 9
-                            color: revealSecret.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
-                            anchors.left: indicatorBox.right; anchors.leftMargin: 6; anchors.verticalCenter: indicatorBox.verticalCenter
-                        }
-                        
-                        KeyNavigation.up: password
-                        // Skip loginButton on down press if it's currently disabled
-                        KeyNavigation.down: loginButton.enabled ? loginButton : sessionSelector.exposeSession
                     }
 
                     Button {
@@ -245,7 +165,7 @@ Pane {
                         height: 40
                         text: config.TranslateLogin || "AUTHORIZE"
                         hoverEnabled: true
-                        enabled: username.text !== "" && password.text !== ""
+                        enabled: userInputsModule.usernameText !== "" && userInputsModule.passwordText !== ""
 
                         contentItem: Text {
                             text: loginButton.text
@@ -257,79 +177,25 @@ Pane {
                             color: loginButton.hovered ? Qt.lighter(tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor, 1.1) : (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor)
                             opacity: loginButton.enabled ? 1.0 : 0.4
                         }
-                        onClicked: sddm.login(username.text, password.text, sessionSelector.selectedSession)
+                        onClicked: sddm.login(userInputsModule.usernameText, userInputsModule.passwordText, sessionSelector.selectedSession)
                         
-                        KeyNavigation.up: revealSecret
+                        // Link directly into the bottom of the input module
+                        KeyNavigation.up: userInputsModule.focusBottom
                         KeyNavigation.down: sessionSelector.exposeSession
                     }
 
                     LucyComp.SessionButton {
                         id: sessionSelector
-
-                        // Dynamically route upward focus: skip loginButton if it is disabled
-                        navigationUp: loginButton.enabled ? loginButton : revealSecret
-                        navigationDown: rebootButton
+                        navigationUp: loginButton.enabled ? loginButton : userInputsModule.focusBottom
+                        navigationDown: systemControlsModule.rebootBtn
                     }
 
-                    Row {
-                        width: parent.width
-                        spacing: 8
-
-                        Button {
-                            id: rebootButton
-                            width: (parent.width - 8) / 2
-                            height: 32
-                            text: "REBOOT"
-                            hoverEnabled: true
-                            onClicked: sddm.reboot()
-
-                            contentItem: Text {
-                                text: parent.text
-                                font.family: config.Font
-                                font.pixelSize: 9
-                                font.bold: true
-                                color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                            background: Rectangle {
-                                color: "#111622"
-                                border.color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
-                                border.width: parent.hovered ? 2 : 1
-                            }
-
-                            KeyNavigation.up: sessionSelector.exposeSession
-                            KeyNavigation.down: username
-                            KeyNavigation.right: shutdownButton
-                        }
-
-                        Button {
-                            id: shutdownButton
-                            width: (parent.width - 8) / 2
-                            height: 32
-                            text: "SHUTDOWN"
-                            hoverEnabled: true
-                            onClicked: sddm.powerOff()
-
-                            contentItem: Text {
-                                text: parent.text
-                                font.family: config.Font
-                                font.pixelSize: 9
-                                font.bold: true
-                                color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#64748b"
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                            background: Rectangle {
-                                color: "#111622"
-                                border.color: parent.hovered ? (tacticalContainer.loginFailed ? "#ef4444" : config.AccentColor) : "#334155"
-                                border.width: parent.hovered ? 2 : 1
-                            }
-
-                            KeyNavigation.up: sessionSelector.exposeSession
-                            KeyNavigation.down: username
-                            KeyNavigation.left: rebootButton
-                        }
+                    LucyComp.SystemControls {
+                        id: systemControlsModule
+                        isFailed: tacticalContainer.loginFailed
+                        navUp: sessionSelector.exposeSession
+                        // Close the loop back to the top
+                        navDown: userInputsModule.focusTop
                     }
                 }
             }
@@ -340,6 +206,8 @@ Pane {
         target: sddm
         function onLoginFailed() {
             tacticalContainer.loginFailed = true
+            userInputsModule.clearPassword()
+            userInputsModule.forcePasswordFocus()
             glitchShake.restart()
             resetFail.restart()
         }
