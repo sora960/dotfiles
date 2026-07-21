@@ -1,0 +1,5 @@
+[SddmGreeterTheme]
+Name=Lucy Melancholy
+Description=Minimalist login theme inspired by Cyberpunk: Edgerunners
+MainScript=Main.qml
+ConfigFile=theme.conf

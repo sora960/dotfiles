@@ -1,106 +1,86 @@
-# 🌐 EDGERUNNER HUD // SDDM LUCY THEME
+# Lucy's Melancholy - SDDM Theme
 
-A lightweight SDDM theme inspired by the cybernetic interface design language of *Cyberpunk: Edgerunners*.
+A minimalist, atmospheric SDDM login theme inspired by the quiet longing of *Cyberpunk: Edgerunners*.
 
-The theme prioritizes fast startup, keyboard accessibility, restrained visual feedback, and maintainable QML over excessive visual effects, making it suitable for everyday use.
-
----
-
-## Preview
-
-![Lucy Theme Preview](preview.png)
+Moving away from loud, gamified hacker interfaces, this theme focuses on a grounded, **"mellow solitude"** aesthetic. It features a transparent floating-island panel, restrained visual feedback, and deep contrast.
 
 ---
 
-## Built With
+## ✨ Design Philosophy
 
-- SDDM
-- Qt Quick (QML)
-- Qt Quick Controls 2
-- Qt Multimedia
-
----
-
-## 🎯 Project Goals
-
-- **Fast Boot-Time Rendering:** Keep the login screen lightweight to minimize initialization time when SDDM loads the theme.
-- **Reliable Mouse and Keyboard Usability:** Predictable focus navigation for both mouse-driven and keyboard-only operation.
-- **Daily-Driver Friendly Visuals:** High-contrast tactical aesthetic that avoids eye strain, flickering, or distracting visual effects.
-- **Minimal Runtime Overhead:** Avoid unnecessary animations, canvas rendering, and continuous processing to keep resource usage low.
-- **Easy Maintenance & Customization:** Keep the code organized so assets and behavior are easy to modify.
-
-## 🎯 Code Quality
-
-- **Modular Components:** Keep reusable widgets (such as `SessionButton.qml`) isolated while avoiding unnecessary abstraction for one-off elements.
-
-## 🎨 Design Philosophy
-
-- **Calm While Idle:** Restrained, high-contrast cybernetic HUD panel.
-- **Clear, Deliberate Error Feedback:** Failed operations should provide immediate, subtle visual confirmation without distracting from the login experience.
-- **No Gratuitous Visual Noise:** No persistent flickering, screen tearing, or heavy RGB splitting.
-- **Animations Under 250 ms:** Interaction animations should complete quickly and return to the idle state.
+- **Mellow Solitude** — A quiet, unobstructed view of the background.
+- **Floating Island Panel** — Interface elements are contained within a single, softly rounded, semi-transparent island.
+- **Restrained Feedback** — No violent glitches or screen tearing. Authentication failures are handled with elegant, deliberate color shifts (Soft White → Alert Red).
+- **Zero Bloat** — Stripped of unnecessary animations, legacy configurations, and heavy resource usage to ensure a blazing-fast boot time.
 
 ---
 
-# Installation
+## 📂 File Architecture
 
-## 1. Install the theme
+The theme is intentionally modular to keep the root directory clean and maintainable.
 
-Copy the theme into the SDDM themes directory:
+```text
+lucy/
+├── Main.qml
+├── theme.conf
+├── Components/
+│   ├── Clock.qml
+│   ├── UserInputs.qml
+│   ├── SessionButton.qml
+│   ├── PowerButtons.qml
+│   └── ...
+└── Assets/
+    ├── shutdown.svg
+    ├── reboot.svg
+    └── ...
+```
 
-    sudo cp -r lucy /usr/share/sddm/themes/
+### Structure
 
-## 2. Configure SDDM
-
-Set the active theme:
-
-    [Theme]
-    Current=lucy
-
-This can be placed in `/etc/sddm.conf` or an appropriate file under `/etc/sddm.conf.d/`.
-
-## 3. Test Before Rebooting
-
-Always verify the theme before logging out:
-
-    sddm-greeter --test-mode --theme /usr/share/sddm/themes/lucy
+| File/Folder | Description |
+|-------------|-------------|
+| `Main.qml` | Core layout, animations, and background handler. |
+| `theme.conf` | Easy customization for background, colors, fonts, and sizing. |
+| `Components/` | Modular QML components for UI elements. |
+| `Assets/` | Lightweight SVG icons used throughout the interface. |
 
 ---
 
-# Theme Roadmap
+## 🚀 Installation
 
-## 🟩 Phase 1 — Core HUD Architecture (COMPLETE)
+1. Copy the theme into the SDDM themes directory.
 
-- [x] Standalone Primary Layout
-- [x] Hardware-Accelerated Video Background
-- [x] High-Contrast Color Palette
-- [x] Square Interface Geometry
+```bash
+sudo cp -r lucy /usr/share/sddm/themes/
+```
 
-## 🟩 Phase 2 — Tactical Interaction (COMPLETE)
+2. Enable the theme by editing `/etc/sddm.conf` (or creating a file inside `/etc/sddm.conf.d/`).
 
-- [x] Desktop Session Selector
-- [x] Native REBOOT / SHUTDOWN controls
-- [x] Authentication Failure Feedback
-- [x] Git version control
+```ini
+[Theme]
+Current=lucy
+```
 
-## 🟩 Phase 3 — Production Polish (COMPLETE)
+3. Test the theme without rebooting.
 
-- [x] Password Field Cache-Clear
-- [x] Symmetric Quad-Corner Framing
-- [x] Caps Lock Indicator
-- [x] Keyboard Focus Audit
-- [x] Remove Unused Legacy Theme Files
+```bash
+sddm-greeter --test-mode --theme /usr/share/sddm/themes/lucy
+```
 
-## 🟦 Phase 4 — Optional Enhancements
+---
 
-- [ ] Optional UI Sound Effects
-- [ ] Subtle Access-Denied Glitch Animation
-- [ ] Optional Shader-Based Effects
+## 🎨 Features
 
-## 🟪 Phase 5 — Compatibility & Maintenance
+- Transparent floating login panel
+- Atmospheric minimalist design
+- Lightweight and responsive
+- Modular QML architecture
+- Easy customization through `theme.conf`
+- Soft authentication feedback
+- Fast startup with minimal resource usage
 
-- [ ] Test Multiple Aspect Ratios
-- [ ] Display Scaling Verification
-- [ ] Resolution Verification
-- [ ] Wayland / X11 Testing
-- [ ] Installation & Customization Documentation
+---
+
+## 📸 Inspiration
+
+Inspired by the melancholic atmosphere and quiet emotional tone of **Cyberpunk: Edgerunners**, Lucy's Melancholy aims to create a login experience that feels calm, minimalist, and contemplative rather than flashy or overly animated.
