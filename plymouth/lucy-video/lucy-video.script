@@ -1,0 +1,39 @@
+Window.SetBackgroundTopColor(0.0, 0.0, 0.0);
+Window.SetBackgroundBottomColor(0.0, 0.0, 0.0);
+
+// Pre-load 59 frames into memory
+for (i = 1; i <= 59; i++) {
+    if (i < 10) {
+        index_str = "000" + i;
+    } else {
+        index_str = "00" + i;
+    }
+    frames[i] = Image("animation-" + index_str + ".png");
+}
+
+anim.sprite = Sprite();
+
+// Center the video frames on your screen
+anim.sprite.SetX((Window.GetWidth() / 2) - (frames[1].GetWidth() / 2));
+anim.sprite.SetY((Window.GetHeight() / 2) - (frames[1].GetHeight() / 2));
+
+frame_count = 1;
+tick = 0;
+speed = 2; // Holds each frame for 2 monitor refreshes
+
+// Set initial frame
+anim.sprite.SetImage(frames[1]);
+
+fun refresh_callback () {
+    tick++;
+    if (tick >= speed) {
+        tick = 0;
+        frame_count++;
+        if (frame_count > 59) {
+            frame_count = 1;
+        }
+        anim.sprite.SetImage(frames[frame_count]);
+    }
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);

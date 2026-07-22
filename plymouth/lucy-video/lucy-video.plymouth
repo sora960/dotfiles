@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Lucy Video Boot
+Description=Lucy custom 1080p 2-second boot loop
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/lucy-video
+ScriptFile=/usr/share/plymouth/themes/lucy-video/lucy-video.script
