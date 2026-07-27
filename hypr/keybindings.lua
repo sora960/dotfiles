@@ -32,8 +32,13 @@ hl.bind(
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("grim - | wl-copy"))
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.local/bin/screen-record.sh"))
 
--- QuickShell Refresh
-hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("killall qs; qs &"))
+-- QuickShell Toggle
+hl.bind(
+	"SUPER + SHIFT + L",
+	hl.dsp.exec_cmd(
+		"systemctl --user is-active --quiet qs.service && systemctl --user stop qs.service || systemctl --user start qs.service"
+	)
+)
 
 -- Navigation / Focus
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
