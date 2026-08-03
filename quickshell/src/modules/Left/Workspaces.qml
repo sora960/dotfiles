@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
 
-// --- ADD THIS LINE TO FIND Theme.qml ---
 import "../../../"
 
 RowLayout {
@@ -16,9 +15,8 @@ RowLayout {
             id: wsItem
             implicitWidth: isActive ? 22 : (hasWindows ? 8 : 6)
             implicitHeight: 6
-			//anchors.verticalCenter: parent.verticalCenter
 
-		    Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignVCenter
 
             property var ws: Hyprland.workspaces.values.find(w => w.id === index + 1)
             property bool isActive: Hyprland.focusedWorkspace?.id === (index + 1)
@@ -28,10 +26,10 @@ RowLayout {
 
             Rectangle {
                 anchors.fill: parent
-                radius: 1 // Sharp, slightly broken edges
+                radius: 1
                 
                 color: wsItem.isActive 
-                    ? Theme.accent 
+                    ? Theme.monowireYellow 
                     : (wsItem.hasWindows ? Theme.textMain : Theme.borderIdle)
                 
                 opacity: wsItem.isActive ? 1.0 : (wsItem.hasWindows ? 0.7 : 0.3)

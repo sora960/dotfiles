@@ -1,22 +1,16 @@
 import QtQuick
-
-// --- ADD THIS LINE TO FIND Theme.qml ---
 import "../../"
 
 Canvas {
     id: root
     anchors.fill: parent
 
-    // Dynamic widths bound from Bar.qml
     property int leftWidth: 0
     property int centerWidth: 0
     property int rightWidth: 0
 
     property int notchHeight: 34   // Depth of the drop-down
-    property int radius: 8         // Smoothness of the concave/convex curves
-    
-    // SECRET 2: Force the bridge thickness to 0 so the gaps are completely empty!
-    property int topBorderWidth: 0 
+    property int chamfer: 6        // Size of the 45-degree bottom corner cut
     
     property color color: Theme.bgPanel 
 
@@ -34,56 +28,63 @@ Canvas {
         var centerW = root.centerWidth
         var rightW  = root.rightWidth
 
-        var r = root.radius
+        var c = root.chamfer
         var h = root.notchHeight
-        var b = root.topBorderWidth
         var w = width
 
         var centerStart = (w / 2) - (centerW / 2)
         var centerEnd   = (w / 2) + (centerW / 2)
         var rightStart  = w - rightW
 
+        // --- 1. DRAW BASE ISLAND PANELS ---
         ctx.beginPath();
         ctx.fillStyle = root.color;
-        
-        // Optional: add a thin border around the whole shape
         ctx.strokeStyle = Theme.borderIdle;
         ctx.lineWidth = 1;
 
-        // 1. LEFT NOTCH (Convex bottom, Concave top right)
-        ctx.moveTo(0, h);
-        ctx.lineTo(leftW - r, h);
-        ctx.arcTo(leftW, h, leftW, h - r, r);
-        ctx.lineTo(leftW, b + r);
-        ctx.arcTo(leftW, b, leftW + r, b, r);
+        // LEFT ISLAND
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, h);
+        ctx.lineTo(leftW - c, h);
+        ctx.lineTo(leftW, h - c);
+        ctx.lineTo(leftW, 0);
 
         // GAP 1
-        ctx.lineTo(centerStart - r, b);
+        ctx.lineTo(centerStart, 0);
 
-        // 3. CENTER NOTCH (Concave top left, Convex bottom, Concave top right)
-        ctx.arcTo(centerStart, b, centerStart, b + r, r);
-        ctx.lineTo(centerStart, h - r);
-        ctx.arcTo(centerStart, h, centerStart + r, h, r);
-        ctx.lineTo(centerEnd - r, h);
-        ctx.arcTo(centerEnd, h, centerEnd, h - r, r);
-        ctx.lineTo(centerEnd, b + r);
-        ctx.arcTo(centerEnd, b, centerEnd + r, b, r);
+        // CENTER ISLAND
+        ctx.lineTo(centerStart, h - c);
+        ctx.lineTo(centerStart + c, h);
+        ctx.lineTo(centerEnd - c, h);
+        ctx.lineTo(centerEnd, h - c);
+        ctx.lineTo(centerEnd, 0);
 
         // GAP 2
-        ctx.lineTo(rightStart - r, b);
+        ctx.lineTo(rightStart, 0);
 
-        // 5. RIGHT NOTCH (Concave top left, Convex bottom)
-        ctx.arcTo(rightStart, b, rightStart, b + r, r);
-        ctx.lineTo(rightStart, h - r);
-        ctx.arcTo(rightStart, h, rightStart + r, h, r);
+        // RIGHT ISLAND
+        ctx.lineTo(rightStart, h - c);
+        ctx.lineTo(rightStart + c, h);
         ctx.lineTo(w, h);
-
-        // 6. CLOSE LOOP (Draws back across the absolute top edge)
         ctx.lineTo(w, 0);
-        ctx.lineTo(0, 0);
-        ctx.lineTo(0, h);
 
+        ctx.closePath();
         ctx.fill();
-        ctx.stroke(); // Draw the subtle outline
+        ctx.stroke();
+
+        // --- 2. DRAW MONOWIRE FILAMENT LINE ALONG GAP TOP BEZEL ---
+        ctx.beginPath();
+        ctx.strokeStyle = Theme.monowireGlow;
+        ctx.lineWidth = 1;
+
+        // Gap 1 Line
+        ctx.moveTo(leftW, 0);
+        ctx.lineTo(centerStart, 0);
+
+        // Gap 2 Line
+        ctx.moveTo(centerEnd, 0);
+        ctx.lineTo(rightStart, 0);
+
+        ctx.stroke();
     }
 }

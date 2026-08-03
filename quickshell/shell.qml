@@ -1,8 +1,9 @@
-// shell.qml
 import Quickshell
 import QtQuick
-import "./src/windows/"
+
+import "src/windows"
 
 ShellRoot {
-    Bar {}
+    TopBar {}
+    BottomDock {}
 }

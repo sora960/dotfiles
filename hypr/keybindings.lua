@@ -7,6 +7,10 @@ local browser = prog.browser
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
+
+
+-- Single Tap SUPER to toggle QuickShell launcher
+hl.bind("SUPER + SUPER_L", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { release = true })
 -- Core App Shortcuts
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
@@ -23,14 +27,24 @@ hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 
 -- Screenshots & Screencasting
+
 hl.bind(
-	"Print",
-	hl.dsp.exec_cmd(
-		"grim -g \"$(slurp)\" - | tee /home/lucy/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy"
-	)
+    "Print",
+    hl.dsp.exec_cmd(
+        "hyprpicker -r -z & PID=$!; sleep 0.1; grim -g \"$(slurp)\" - | tee /home/lucy/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy; kill $PID"
+    )
 )
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("grim - | wl-copy"))
+
+-- Full Screen Capture: Saves to file AND copies to clipboard
+hl.bind(
+    "SHIFT + Print",
+    hl.dsp.exec_cmd(
+        "grim - | tee /home/lucy/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy"
+    )
+)
+
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.local/bin/screen-record.sh"))
+
 
 -- QuickShell Toggle
 hl.bind(

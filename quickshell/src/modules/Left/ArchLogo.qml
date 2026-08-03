@@ -1,7 +1,6 @@
 import QtQuick
-import Quickshell.Io // Necessary for background process checks
+import Quickshell.Io
 
-// --- ADD THIS LINE TO FIND Theme.qml ---
 import "../../../"
 
 Item {
@@ -11,12 +10,10 @@ Item {
 
     // Properties for system state
     property int updateCount: 0
-    property bool isCritical: false // Can map to high temperatures or crash triggers later
+    property bool isCritical: false
 
-    // background check for pending pacman/AUR updates
     Process {
         id: pacmanCheck
-        // Uses pacman -Qu (quiet update check). Returns 1 if no updates.
         command: ["sh", "-c", "checkupdates | wc -l"]
         running: true
         
@@ -28,7 +25,6 @@ Item {
         }
     }
 
-    // Refresh update status every 30 minutes
     Timer {
         interval: 1800000 
         running: true
@@ -39,28 +35,27 @@ Item {
     Text {
         id: logo
         anchors.centerIn: parent
-        text: "󰣇" // Nerd Font Arch Icon
+        text: "󰣇"
         font.family: Theme.fontFamily
         font.pixelSize: 20
 
         // Multi-State Color Logic:
-        // 1. Critical Alarm (Red) 
-        // 2. Updates Available (Mellow Lucy Lavender/Pink)
-        // 3. Normal / Empty State (Quiet Night Slate Blue)
+        // 1. Critical Alarm -> Red (Theme.error)
+        // 2. Updates Available -> Monowire Yellow (Theme.monowireYellow)
+        // 3. Normal Idle State -> Clean Moon-Grey (Theme.textMain)
         color: root.isCritical 
             ? Theme.error 
-            : (root.updateCount > 0 ? Theme.characterAccent : Theme.textMuted)
+            : (root.updateCount > 0 ? Theme.monowireYellow : Theme.textMain)
 
-        // Soft, organic breathing pulse if there are active updates waiting
+        // Soft breathing pulse when updates are pending
         SequentialAnimation on opacity {
             running: root.updateCount > 0 && !root.isCritical
             loops: Animation.Infinite
             NumberAnimation { to: 0.4; duration: 2000; easing.type: Easing.InOutSine }
-            NumberAnimation { to: 0.9; duration: 2000; easing.type: Easing.InOutSine }
+            NumberAnimation { to: 1.0; duration: 2000; easing.type: Easing.InOutSine }
         }
 
-        // Keep it static and dim if there are no updates
-        opacity: root.updateCount > 0 ? 0.9 : 0.4
+        opacity: root.updateCount > 0 ? 1.0 : 0.85
 
         Behavior on color { ColorAnimation { duration: 300 } }
     }
