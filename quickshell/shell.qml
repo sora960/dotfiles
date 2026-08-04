@@ -5,5 +5,7 @@ import "src/windows"
 
 ShellRoot {
     TopBar {}
+    NotificationWindow {}
+    AppLauncherWindow {}
     BottomDock {}
 }
