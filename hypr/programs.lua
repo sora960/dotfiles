@@ -4,6 +4,6 @@
 return {
 	terminal = "uwsm app -- kitty",
 	fileManager = "uwsm app -- thunar",
-	menu = [[uwsm app -- fuzzel --launch-prefix="uwsm app --"]],
+	menu = "qs ipc call applauncher toggle",
 	browser = "uwsm app -- firefox",
 }
