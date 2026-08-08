@@ -57,11 +57,11 @@ hl.config({
 	general = {
 		gaps_in = 5,
 		gaps_out = {
-            top = 20,
-            right = 10,
-            bottom = 10,
-            left = 5,
-        },
+			top = 20,
+			right = 10,
+			bottom = 10,
+			left = 5,
+		},
 
 		border_size = 1,
 
@@ -86,6 +86,8 @@ hl.config({
 		-- Change transparency of focused and unfocused windows
 		active_opacity = 1.0,
 		inactive_opacity = 1.0,
+
+		screen_shader = "/home/lucy/dotfiles/hypr/shaders/eink.frag",
 
 		shadow = {
 			enabled = true,

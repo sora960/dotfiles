@@ -7,21 +7,22 @@ local browser = prog.browser
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
-
-
 -- Single Tap SUPER to toggle QuickShell launcher
 hl.bind("SUPER + SUPER_L", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { release = true })
+
 -- Core App Shortcuts
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
+
 -- closeWindowBind:set_enabled(false)
+local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
+
 hl.bind(
 	mainMod .. " + M",
 	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
 )
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
@@ -114,3 +115,40 @@ hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+
+
+
+-- E-ink Shader Toggle
+local einkShaderPath = "/home/lucy/dotfiles/hypr/shaders/eink.frag"
+local einkShaderOn = true
+
+local function toggle_eink_shader()
+	einkShaderOn = not einkShaderOn
+
+	if einkShaderOn then
+		-- Kill blur/shadow/animations before attaching the shader,
+		-- and force full-frame redraws instead of partial damage tracking
+		hl.config({
+			decoration = {
+				shadow = { enabled = false },
+				blur = { enabled = false },
+			},
+			animations = { enabled = false },
+			debug = { damage_tracking = 0 },
+		})
+		hl.config({ decoration = { screen_shader = einkShaderPath } })
+	else
+		-- Clear shader first, then restore normal decoration/animations
+		hl.config({ decoration = { screen_shader = "" } })
+		hl.config({
+			decoration = {
+				shadow = { enabled = true },
+				blur = { enabled = true },
+			},
+			animations = { enabled = true },
+			debug = { damage_tracking = 2 },
+		})
+	end
+end
+
+hl.bind(mainMod .. " + SHIFT + T", toggle_eink_shader)
