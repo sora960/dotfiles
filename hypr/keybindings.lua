@@ -1,3 +1,4 @@
+-- Apps
 local prog = require("programs")
 
 local terminal = prog.terminal
@@ -5,17 +6,20 @@ local fileManager = prog.fileManager
 local menu = prog.menu
 local browser = prog.browser
 
+-- Paths
+local home = os.getenv("HOME")
+local shader = require("shader")
+
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
--- Single Tap SUPER to toggle QuickShell launcher
-hl.bind("SUPER + SUPER_L", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { release = true })
+-- Opacity Menu
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/opacity.sh"))
+
+-- Logout
+hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("wlogout -b 1 -c 20 -r 20 -L 1700 -R 1700 -T 325 -B 325"))
 
 -- Core App Shortcuts
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-
--- closeWindowBind:set_enabled(false)
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
-
 hl.bind(
 	mainMod .. " + M",
 	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
@@ -27,33 +31,51 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 
--- Screenshots & Screencasting
+-- Wallpaper Selector
+-- hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("quickshell -c " .. home .. "/.config/quickshell/hyprquickpaper"))
+-- closeWindowBind:set_enabled(false)
+local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 
+-- Screen Recorder
+hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd(home .. "/.local/bin/screen-record.sh"))
+
+-- Study Timer Menu
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/timer.sh menu"))
+
+-- Full Screen Capture (Print Screen)
 hl.bind(
-    "Print",
-    hl.dsp.exec_cmd(
-        "hyprpicker -r -z & PID=$!; sleep 0.1; grim -g \"$(slurp)\" - | tee /home/lucy/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy; kill $PID"
-    )
-)
-
--- Full Screen Capture: Saves to file AND copies to clipboard
-hl.bind(
-    "SHIFT + Print",
-    hl.dsp.exec_cmd(
-        "grim - | tee /home/lucy/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy"
-    )
-)
-
-hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.local/bin/screen-record.sh"))
-
-
--- QuickShell Toggle
-hl.bind(
-	"SUPER + SHIFT + L",
+	"Print",
 	hl.dsp.exec_cmd(
-		"systemctl --user is-active --quiet qs.service && systemctl --user stop qs.service || systemctl --user start qs.service"
+		"sh -c 'mkdir -p "
+			.. home
+			.. "/Pictures/Screenshots && grim "
+			.. home
+			.. "/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png && wl-copy < "
+			.. home
+			.. "/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png'"
 	)
 )
+
+-- Area / Region Capture (SHIFT + Print Screen)
+hl.bind(
+	"SHIFT + Print",
+	hl.dsp.exec_cmd(
+		"sh -c 'mkdir -p "
+			.. home
+			.. '/Pictures/Screenshots && grim -g "$(slurp)" - | tee '
+			.. home
+			.. "/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy'"
+	)
+)
+
+-- Toggle Waybar via UWSM
+hl.bind(
+	mainMod .. " + SHIFT + W",
+	hl.dsp.exec_cmd("sh -c 'pgrep -x waybar >/dev/null && pkill -x waybar || uwsm app -- waybar'")
+)
+
+-- Shader Toggle
+hl.bind(mainMod .. " + SHIFT + T", shader.toggle_eink)
 
 -- Navigation / Focus
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
@@ -81,74 +103,52 @@ hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- Volume & Brightness
--- Dedicated Function Keys (F8: Vol Down, F9: Vol Up, F10: Mute)
+-- Volume Control (Dedicated Function Keys: F8: Vol Down, F9: Vol Up, F10: Mute)
 hl.bind("F8", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
 hl.bind("F9", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
 hl.bind("F10", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
+-- Apps
+-- Floating Notes (Neovim in Kitty)
 hl.bind(
-	"XF86AudioRaiseVolume",
-	hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
-	{ locked = true, repeating = true }
+	mainMod .. " + N",
+	hl.dsp.exec_cmd(
+		"uwsm app -- "
+			.. terminal
+			.. " --class floating-notes -e env NVIM_APPNAME=nvim-notes nvim "
+			.. home
+			.. "/notes.md"
+	)
 )
-hl.bind(
-	"XF86AudioLowerVolume",
-	hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
-	{ locked = true, repeating = true }
-)
-hl.bind(
-	"XF86AudioMute",
-	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
-	{ locked = true, repeating = true }
-)
-hl.bind(
-	"XF86AudioMicMute",
-	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
-	{ locked = true, repeating = true }
-)
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { locked = true, repeating = true })
 
--- Media Control
-hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
-hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+-- Book Shelf Launcher
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(home .. "/.local/bin/book-shelf.sh"))
 
+-- Media Control (Dedicated Function Keys: F5: Play/Pause, F6: Previous, F7: Next)
+-- hl.bind("F5", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+-- hl.bind("F6", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+-- hl.bind("F7", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 
+-- Might be useful
+-- Single Tap SUPER to toggle QuickShell launcher
+-- hl.bind("SUPER + SUPER_L", hl.dsp.exec_cmd("qs ipc call launcher toggle"), { release = true })
+-- QuickShell Toggle (Robust Shell-level process check)
+-- hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("sh -c 'pgrep -x quickshell >/dev/null && pkill -x quickshell || uwsm app -- quickshell'"))
 
--- E-ink Shader Toggle
-local einkShaderPath = "/home/lucy/dotfiles/hypr/shaders/eink.frag"
-local einkShaderOn = true
-
-local function toggle_eink_shader()
-	einkShaderOn = not einkShaderOn
-
-	if einkShaderOn then
-		-- Kill blur/shadow/animations before attaching the shader,
-		-- and force full-frame redraws instead of partial damage tracking
-		hl.config({
-			decoration = {
-				shadow = { enabled = false },
-				blur = { enabled = false },
-			},
-			animations = { enabled = false },
-			debug = { damage_tracking = 0 },
-		})
-		hl.config({ decoration = { screen_shader = einkShaderPath } })
-	else
-		-- Clear shader first, then restore normal decoration/animations
-		hl.config({ decoration = { screen_shader = "" } })
-		hl.config({
-			decoration = {
-				shadow = { enabled = true },
-				blur = { enabled = true },
-			},
-			animations = { enabled = true },
-			debug = { damage_tracking = 2 },
-		})
-	end
-end
-
-hl.bind(mainMod .. " + SHIFT + T", toggle_eink_shader)
+-- Unused
+--hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { locked = true, repeating = true })
+--hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { locked = true, repeating = true })
+-- hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
+-- hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+-- hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+-- hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+-- hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+-- hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
+-- hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true, repeating = true })
+-- hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true, repeating = true })
+-- hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { locked = true, repeating = true })
+-- hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { locked = true, repeating = true })
+-- hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
+-- hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+-- hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+-- hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })

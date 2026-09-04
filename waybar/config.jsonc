@@ -1,0 +1,80 @@
+{
+    "layer": "top",
+    "position": "top",
+    "exclusive": false,
+    "height": 30,
+    "spacing": 4,
+
+    "modules-left": ["cpu", "custom/gpu", "memory", "temperature"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/timer", "mpris", "network", "pulseaudio", "custom/power"],
+
+    "cpu": {
+        "format": "CPU {usage}%",
+        "interval": 2
+    },
+
+    "memory": {
+        "format": "RAM {percentage}%",
+        "tooltip-format": "{used} / {total}GiB",
+        "interval": 2
+    },
+    
+    "temperature": {
+        "hwmon-path": "/sys/class/hwmon/hwmon5/temp1_input",
+        "critical-threshold": 80,
+        "format": " {temperatureC}°C",
+        "format-critical": " {temperatureC}°C",
+        "tooltip": true,
+        "tooltip-format": "CPU Temp: {temperatureC}°C",
+        "interval": 2
+    },
+
+    "clock": {
+        "format": "{:%a %d %b  %H:%M}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+
+"custom/timer": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "/home/lucy/.config/hypr/scripts/timer.sh status",
+    "on-click": "/home/lucy/.config/hypr/scripts/timer.sh menu",
+    "interval": 1
+},
+
+    "mpris": {
+        "format": "{title} - {artist}",
+        "format-paused": "{title} - {artist}",
+        "max-length": 50,
+        "tooltip": false,
+        "interval": 2
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "Muted",
+        "format-icons": {
+            "default": ["", "", ""]
+        },
+        "tooltip": false,
+        "on-click": "pavucontrol"
+    },
+
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "wlogout -b 1 -c 20 -r 20 -L 1700 -R 1700 -T 325 -B 325"
+    },
+
+	"network": {
+        "interval": 3,
+        "format-wifi": "󰤨  {essid} ({signalStrength}%)",
+        "format-ethernet": "󰈀  {ifname}",
+        "format-linked": "󰈀  {ifname} (No IP)",
+        "format-disconnected": "󰤮  Offline",
+        "tooltip-format-wifi": "󰤨  {essid} ({signalStrength}%)\nIP: {ipaddr}\nGW: {gwaddr}",
+        "tooltip-format-ethernet": "󰈀  {ifname}\nIP: {ipaddr}\nGW: {gwaddr}",
+        "on-click": "kitty --class float-term -e env NEWT_COLORS='root=,#000000:window=#e6eaf2,#111318:border=#7aa2f7,#111318:title=#7aa2f7,#111318:button=#111318,#7aa2f7:actbutton=#111318,#ffffff:checkbox=#e6eaf2,#111318:actcheckbox=#111318,#7aa2f7:entry=#ffffff,#242832:label=#e6eaf2,#111318:listbox=#e6eaf2,#111318:actlistbox=#111318,#7aa2f7:textbox=#e6eaf2,#111318:actsellistbox=#111318,#7aa2f7' nmtui"
+    }
+}

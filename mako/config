@@ -1,0 +1,58 @@
+# ==============================================================================
+#  Mako Notification Config (Pure Dark / Monochrome Theme)
+# ==============================================================================
+
+# Placement & Layer
+layer=overlay
+anchor=top-right
+sort=-time
+max-visible=5
+
+# Geometry & Spacing (matches Rofi's 18px radius, borderless window)
+width=380
+height=110
+margin=14
+padding=14,18
+border-size=0
+border-radius=18
+
+# Typography (matches Iosevka font stack - clean white/silver text, no blue markup)
+font=Iosevka 11
+format=<b>%s</b>\n%b
+
+# Pure Dark / Monochrome Palette
+background-color=#000000D0
+text-color=#FFFFFF
+border-color=#00000000
+progress-color=over #555555
+
+# Icons
+icons=1
+max-icon-size=32
+icon-location=left
+icon-border-radius=8
+
+# Behavior & Lifecycle
+default-timeout=5000
+ignore-timeout=0
+
+# ==============================================================================
+#  Urgency (Clean Grays - No Colorful Highlights)
+# ==============================================================================
+
+[urgency=low]
+background-color=#000000B0
+text-color=#A2A2A2
+default-timeout=3000
+
+[urgency=normal]
+background-color=#000000D0
+text-color=#FFFFFF
+default-timeout=5000
+
+[urgency=high]
+background-color=#151515F0
+text-color=#FFFFFF
+border-size=1
+border-color=#555555
+default-timeout=0

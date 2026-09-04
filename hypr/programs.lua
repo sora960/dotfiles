@@ -4,6 +4,6 @@
 return {
 	terminal = "uwsm app -- kitty",
 	fileManager = "uwsm app -- thunar",
-	menu = "qs ipc call applauncher toggle",
+	menu = "uwsm app -- rofi -show drun",
 	browser = "uwsm app -- firefox",
 }

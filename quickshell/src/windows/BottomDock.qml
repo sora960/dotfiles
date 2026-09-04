@@ -1,5 +1,4 @@
 import Quickshell
-import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Widgets
@@ -9,20 +8,15 @@ PanelWindow {
     id: bottomdock
 
     anchors.bottom: true
-    // Shrinked compact width
     implicitWidth: 400
     implicitHeight: 60
     exclusiveZone: 0
 
+    // Receive state from shell.qml
     property bool isOpen: false
-
-    IpcHandler {
-        target: "launcher"
-
-        function toggle(): void {
-            bottomdock.isOpen = !bottomdock.isOpen;
-        }
-    }
+    
+    // Signal to tell shell.qml to close the dock
+    signal requestClose()
 
     margins {
         bottom: isOpen ? 12 : -implicitHeight
@@ -44,22 +38,19 @@ PanelWindow {
             id: iconListView
             anchors.fill: parent
             anchors.margins: 14
-
             orientation: ListView.Horizontal
             spacing: 16
             clip: true
-
             model: DesktopEntries.applications
 
-            // Mouse wheel handler for smooth horizontal scrolling
             WheelHandler {
                 id: wheelHandler
                 orientation: Qt.Horizontal
                 onWheel: (event) => {
                     if (event.angleDelta.y < 0 || event.angleDelta.x < 0) {
-                        iconListView.flick(500, 0)  // Scroll right
+                        iconListView.flick(500, 0)
                     } else {
-                        iconListView.flick(-500, 0) // Scroll left
+                        iconListView.flick(-500, 0)
                     }
                 }
             }
@@ -70,13 +61,11 @@ PanelWindow {
                 height: 40
                 anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-                // Hover highlight box
                 Rectangle {
                     anchors.fill: parent
                     color: itemMouseArea.containsMouse ? (Theme.bgHover || Theme.bgPanel) : "transparent"
                 }
 
-                // App Icon
                 IconImage {
                     width: 32
                     height: 32
@@ -84,7 +73,6 @@ PanelWindow {
                     source: Quickshell.iconPath(modelData.icon)
                 }
 
-                // Click area
                 MouseArea {
                     id: itemMouseArea
                     anchors.fill: parent
@@ -92,7 +80,8 @@ PanelWindow {
 
                     onClicked: {
                         modelData.execute()
-                        bottomdock.isOpen = false
+                        // Tell root to close the dock instead of doing it locally
+                        bottomdock.requestClose()
                     }
                 }
             }
