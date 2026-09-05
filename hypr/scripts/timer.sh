@@ -118,7 +118,7 @@ menu() {
 # The Waybar Status Output
 status() {
     if [ ! -f "$STATE_FILE" ]; then
-        echo '{"text": " Study", "tooltip": "Click to open timer menu", "class": "stopped"}'
+        echo '{"text": " Study", "tooltip": "Click to open timer menu", "class": "stopped"}'
         return
     fi
     
@@ -127,16 +127,16 @@ status() {
     if [ "$status" = "PAUSED" ]; then
         local mins=$((remaining / 60))
         local secs=$((remaining % 60))
-        printf '{"text": " %02d:%02d", "tooltip": "Paused - Click to resume/stop", "class": "paused"}\n' "$mins" "$secs"
+        printf '{"text": "%02d:%02d", "tooltip": "Paused - Click to resume/stop", "class": "paused"}\n' "$mins" "$secs"
     else
         local now=$(date +%s)
         local diff=$((end_time - now))
         if [ "$diff" -le 0 ]; then
-            echo '{"text": " 00:00", "class": "finished"}'
+            echo '{"text": "00:00", "class": "finished"}'
         else
             local mins=$((diff / 60))
             local secs=$((diff % 60))
-            printf '{"text": " %02d:%02d", "tooltip": "Running - Click to pause/stop", "class": "running"}\n' "$mins" "$secs"
+            printf '{"text": "%02d:%02d", "tooltip": "Running - Click to pause/stop", "class": "running"}\n' "$mins" "$secs"
         fi
     fi
 }

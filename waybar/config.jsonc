@@ -1,13 +1,13 @@
 {
     "layer": "top",
     "position": "top",
-    "exclusive": false,
+    "exclusive": true,
     "height": 30,
     "spacing": 4,
 
-    "modules-left": ["cpu", "custom/gpu", "memory", "temperature"],
-    "modules-center": ["clock"],
-    "modules-right": ["custom/timer", "mpris", "network", "pulseaudio", "custom/power"],
+    "modules-left": ["cpu", "custom/gpu", "memory", "temperature", "network"],
+    "modules-center": ["clock", "custom/timer"],
+    "modules-right": ["mpris", "pulseaudio"],
 
     "cpu": {
         "format": "CPU {usage}%",
@@ -55,26 +55,26 @@
         "format": "{icon}  {volume}%",
         "format-muted": "Muted",
         "format-icons": {
-            "default": ["", "", ""]
+            "default": ["min", "mid", "max"]
         },
         "tooltip": false,
         "on-click": "pavucontrol"
     },
 
-    "custom/power": {
-        "format": "⏻",
-        "tooltip": false,
-        "on-click": "wlogout -b 1 -c 20 -r 20 -L 1700 -R 1700 -T 325 -B 325"
-    },
+    // "custom/power": {
+    //     "format": "⏻",
+    //     "tooltip": false,
+    //     "on-click": "wlogout -b 1 -c 20 -r 20 -L 1700 -R 1700 -T 325 -B 325"
+    // },
 
 	"network": {
         "interval": 3,
-        "format-wifi": "󰤨  {essid} ({signalStrength}%)",
-        "format-ethernet": "󰈀  {ifname}",
-        "format-linked": "󰈀  {ifname} (No IP)",
-        "format-disconnected": "󰤮  Offline",
-        "tooltip-format-wifi": "󰤨  {essid} ({signalStrength}%)\nIP: {ipaddr}\nGW: {gwaddr}",
-        "tooltip-format-ethernet": "󰈀  {ifname}\nIP: {ipaddr}\nGW: {gwaddr}",
+        "format-wifi": "wifi:  {essid} ({signalStrength}%)",
+        "format-ethernet": "eth:  {ifname}",
+        "format-linked": "eth: {ifname} (No IP)",
+        "format-disconnected": "wifi:  Offline",
+        "tooltip-format-wifi": "wifi: {essid} ({signalStrength}%)\nIP: {ipaddr}\nGW: {gwaddr}",
+        "tooltip-format-ethernet": "eth:  {ifname}\nIP: {ipaddr}\nGW: {gwaddr}",
         "on-click": "kitty --class float-term -e env NEWT_COLORS='root=,#000000:window=#e6eaf2,#111318:border=#7aa2f7,#111318:title=#7aa2f7,#111318:button=#111318,#7aa2f7:actbutton=#111318,#ffffff:checkbox=#e6eaf2,#111318:actcheckbox=#111318,#7aa2f7:entry=#ffffff,#242832:label=#e6eaf2,#111318:listbox=#e6eaf2,#111318:actlistbox=#111318,#7aa2f7:textbox=#e6eaf2,#111318:actsellistbox=#111318,#7aa2f7' nmtui"
     }
 }

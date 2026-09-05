@@ -1,6 +1,6 @@
 /* General */
 * {
-    font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font Mono", monospace;
+    font-family: "Noto Sans", monospace;
     font-size: 11px;
     min-height: 0;
 }
@@ -46,7 +46,7 @@ window#waybar {
 /* Power */
 #custom-power {
     color: #ffffff;
-    font-size: 15px;
+    font-size: 13px;
     margin-right: 10px;
 }
 
