@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+set -u
+
+failures=0
+
+pass() {
+    printf '  ✓ %s\n' "$1"
+}
+
+fail() {
+    printf '  ✗ %s\n' "$1"
+    failures=$((failures + 1))
+}
+
+printf '%s\n' 'System Verification'
+printf '%s\n' '==================='
+
+printf '\n%s\n' 'System'
+
+# OS: CachyOS is identified by its installed keyring.
+if pacman -Q cachyos-keyring >/dev/null 2>&1; then
+    pass 'OS: CachyOS / Arch Linux'
+else
+    fail 'OS: CachyOS / Arch Linux'
+fi
+
+# Desktop
+if [[ "${XDG_CURRENT_DESKTOP:-}" == "Hyprland" ]]; then
+    pass 'Desktop: Hyprland'
+else
+    fail "Desktop: Hyprland (found: ${XDG_CURRENT_DESKTOP:-unknown})"
+fi
+
+# Wayland
+if [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
+    pass 'Protocol: Wayland'
+else
+    fail "Protocol: Wayland (found: ${XDG_SESSION_TYPE:-unknown})"
+fi
+
+# TTY login: no display manager should be active.
+if ! systemctl is-active --quiet display-manager.service 2>/dev/null; then
+    pass 'Login: TTY'
+else
+    fail 'Login: TTY (display manager is active)'
+fi
+
+printf '\n%s\n' 'Development'
+
+for command in git ssh gh php composer paru; do
+    if command -v "$command" >/dev/null 2>&1; then
+        pass "$command"
+    else
+        fail "$command"
+    fi
+done
+
+printf '\n%s\n' 'Scripts'
+
+if [[ -d "$HOME/dotfiles/scripts" ]]; then
+    pass '~/dotfiles/scripts exists'
+else
+    fail '~/dotfiles/scripts exists'
+fi
+
+required_scripts=(
+    areashot.sh
+    book-shelf.sh
+    fullshot.sh
+    rofi-manager.sh
+    screen-record.sh
+    toggle-hyprquickpaper.sh
+)
+
+for script in "${required_scripts[@]}"; do
+    if [[ -f "$HOME/dotfiles/scripts/$script" ]]; then
+        if [[ -x "$HOME/dotfiles/scripts/$script" ]]; then
+            pass "$script exists and is executable"
+        else
+            fail "$script exists but is not executable"
+        fi
+    else
+        fail "$script is missing"
+    fi
+done
+
+printf '\n%s\n' 'Configuration'
+
+if [[ -d "$HOME/dotfiles" ]]; then
+    pass '~/dotfiles exists'
+else
+    fail '~/dotfiles exists'
+fi
+
+if git -C "$HOME/dotfiles" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    pass '~/dotfiles is a Git repository'
+else
+    fail '~/dotfiles is a Git repository'
+fi
+
+printf '\n%s\n' '==================='
+
+if (( failures == 0 )); then
+    printf 'Result: PASS\n'
+    exit 0
+else
+    printf 'Result: FAIL (%d requirement(s) failed)\n' "$failures"
+    exit 1
+fi
