@@ -70,7 +70,6 @@ required_scripts=(
     fullshot.sh
     rofi-manager.sh
     screen-record.sh
-    toggle-hyprquickpaper.sh
 )
 
 for script in "${required_scripts[@]}"; do
