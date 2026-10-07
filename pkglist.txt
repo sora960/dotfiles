@@ -48,6 +48,7 @@ loupe 50.0-1.1
 ly 1.4.1-1.1
 mako 1.11.0-1.1
 marker 2023.05.02-2
+mousepad 0.7.0-1.1
 mpv 1:0.41.0-6.1
 ncdu 2.9.2-1.1
 neovim 0.12.5-1.1
@@ -77,6 +78,7 @@ rtkit 0.14-1.1
 slurp 1.5.0-2.1
 smartmontools 7.5-1.1
 steam 1.0.0.87-3
+stow 2.4.1-1
 sudo 1.9.17.p2-6.1
 sysstat 12.8.0-1.1
 tcpdump 4.99.7-1.1

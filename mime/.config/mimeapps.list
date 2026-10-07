@@ -39,11 +39,12 @@ audio/flac=mpv.desktop
 audio/x-wav=mpv.desktop
 audio/ogg=mpv.desktop
 
-# --- Plain Text & Markdown ---
-text/plain=codium.desktop
-application/x-zerosize=codium.desktop
-text/markdown=com.github.fabiocolacio.marker.desktop
-text/x-markdown=com.github.fabiocolacio.marker.desktop
+# --- Plain Text & Zero-Size ---
+text/plain=org.xfce.mousepad.desktop
+application/x-zerosize=org.xfce.mousepad.desktop
+inode/x-empty=org.xfce.mousepad.desktop
+text/markdown=obsidian.desktop
+text/x-markdown=obsidian.desktop
 
 # --- Development / Code (VSCodium) ---
 text/x-c=codium.desktop
