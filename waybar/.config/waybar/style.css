@@ -111,3 +111,40 @@ tooltip label {
 #network.disconnected {
     color: #8b93a7;
 }
+
+/* Peripheral Modules Spacing */
+#custom-eth,
+#custom-wifi,
+#custom-mic,
+#custom-cam {
+    padding: 0 8px;
+    margin: 0 2px;
+    transition: font-size 0.15s ease;
+}
+
+#custom-eth:hover,
+#custom-wifi:hover,
+#custom-mic:hover,
+#custom-cam:hover {
+    font-size: 14px;
+}
+
+/* Network States */
+#custom-eth.connected   { color: #00ff99; }
+#custom-eth.disconnected{ color: #ff5555; }
+#custom-eth.down        { color: #555555; }
+
+#custom-wifi.connected  { color: #00ff99; }
+#custom-wifi.idle       { color: #888888; }
+#custom-wifi.unplugged  { color: #ff5555; }
+
+/* Mic States */
+#custom-mic.recording   { color: #00ff99; }
+#custom-mic.ready       { color: #cccccc; }
+#custom-mic.muted       { color: #ffcc00; }
+#custom-mic.unplugged   { color: #ff5555; }
+
+/* Camera States */
+#custom-cam.recording   { color: #ff3333; font-weight: bold; }
+#custom-cam.ready       { color: #888888; }
+#custom-cam.unplugged   { color: #555555; }

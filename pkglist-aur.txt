@@ -1,0 +1,4 @@
+google-chrome 154.0.8037.97-1
+lmstudio-bin 0.4.25-1
+ttf-ms-fonts 2.0-12
+vscodium-bin 1.135.06055-1

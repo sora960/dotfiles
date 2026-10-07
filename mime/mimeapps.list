@@ -1,0 +1,88 @@
+[Default Applications]
+# --- File Manager ---
+inode/directory=thunar.desktop
+
+# --- Web Browser ---
+text/html=firefox.desktop
+application/xhtml+xml=firefox.desktop
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+x-scheme-handler/chrome=firefox.desktop
+x-scheme-handler/about=firefox.desktop
+x-scheme-handler/unknown=firefox.desktop
+
+# --- Documents & Office ---
+application/pdf=org.pwmt.zathura.desktop
+application/msword=onlyoffice-desktopeditors.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=onlyoffice-desktopeditors.desktop
+application/vnd.ms-excel=onlyoffice-desktopeditors.desktop
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=onlyoffice-desktopeditors.desktop
+application/vnd.ms-powerpoint=onlyoffice-desktopeditors.desktop
+application/vnd.openxmlformats-officedocument.presentationml.presentation=onlyoffice-desktopeditors.desktop
+application/vnd.oasis.opendocument.text=onlyoffice-desktopeditors.desktop
+
+# --- Images (Loupe) ---
+image/png=org.gnome.Loupe.desktop
+image/jpeg=org.gnome.Loupe.desktop
+image/webp=org.gnome.Loupe.desktop
+image/gif=org.gnome.Loupe.desktop
+image/svg+xml=org.gnome.Loupe.desktop
+image/bmp=org.gnome.Loupe.desktop
+
+# --- Media (MPV) ---
+video/mp4=mpv.desktop
+video/x-matroska=mpv.desktop
+video/webm=mpv.desktop
+video/quicktime=mpv.desktop
+audio/mpeg=mpv.desktop
+audio/flac=mpv.desktop
+audio/x-wav=mpv.desktop
+audio/ogg=mpv.desktop
+
+# --- Plain Text & Markdown ---
+text/plain=codium.desktop
+application/x-zerosize=codium.desktop
+text/markdown=com.github.fabiocolacio.marker.desktop
+text/x-markdown=com.github.fabiocolacio.marker.desktop
+
+# --- Development / Code (VSCodium) ---
+text/x-c=codium.desktop
+text/x-csrc=codium.desktop
+text/x-c++=codium.desktop
+text/x-c++src=codium.desktop
+text/x-java=codium.desktop
+text/x-python=codium.desktop
+text/x-shellscript=codium.desktop
+application/x-shellscript=codium.desktop
+text/javascript=codium.desktop
+application/javascript=codium.desktop
+text/css=codium.desktop
+application/json=codium.desktop
+text/xml=codium.desktop
+application/xml=codium.desktop
+text/x-yaml=codium.desktop
+text/x-ini=codium.desktop
+text/x-log=codium.desktop
+text/x-cmake=codium.desktop
+text/x-qml=codium.desktop
+application/x-qml=codium.desktop
+
+# --- Archives ---
+application/zip=org.gnome.FileRoller.desktop
+application/x-tar=org.gnome.FileRoller.desktop
+application/x-compressed-tar=org.gnome.FileRoller.desktop
+application/x-7z-compressed=org.gnome.FileRoller.desktop
+application/x-bzip=org.gnome.FileRoller.desktop
+application/x-bzip2=org.gnome.FileRoller.desktop
+application/x-rar=org.gnome.FileRoller.desktop
+
+# --- Custom App Handlers ---
+x-scheme-handler/bruno=bruno.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+x-scheme-handler/antigravity=antigravity.desktop
+
+[Added Associations]
+application/pdf=org.pwmt.zathura.desktop;
+image/png=org.gnome.Loupe.desktop;
+image/jpeg=org.gnome.Loupe.desktop;
+text/x-shellscript=codium.desktop;

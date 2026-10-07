@@ -5,12 +5,12 @@
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
 	general = {
-		gaps_in = 5,
+		gaps_in = 20,
 		gaps_out = {
 			top = 20,
-			right = 10,
-			bottom = 10,
-			left = 5,
+			right = 20,
+			bottom = 20,
+			left = 20,
 		},
 
 		border_size = 1,
@@ -56,7 +56,6 @@ hl.config({
 		enabled = true,
 	},
 })
-
 
 -- Default curves and animations, see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
 hl.curve("easeOutQuint", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
@@ -124,3 +123,4 @@ hl.config({
 		fullscreen_on_one_column = true,
 	},
 })
+

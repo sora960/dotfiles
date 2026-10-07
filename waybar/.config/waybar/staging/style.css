@@ -1,0 +1,64 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: rgba(20, 20, 24, 0.85);
+    color: #c0caf5;
+}
+
+/* Base Capsule Pill Styling */
+#group-hardware,
+#group-audio,
+#group-network,
+#clock,
+#custom-timer,
+#mpris,
+#custom-cam {
+    background-color: rgba(36, 40, 59, 0.9);
+    padding: 2px 10px;
+    margin: 3px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hardware internals */
+#cpu, #memory, #temperature {
+    padding: 0 6px;
+    background-color: transparent;
+}
+
+#temperature.critical {
+    color: #f7768e;
+}
+
+/* Audio internals */
+#pulseaudio, #pulseaudio.source {
+    padding: 0 6px;
+    background-color: transparent;
+}
+
+#pulseaudio.muted,
+#pulseaudio.source.muted {
+    color: #565f89;
+}
+
+/* Network */
+#network {
+    padding: 0 4px;
+}
+
+#network.disconnected {
+    color: #f7768e;
+}
+
+/* Live Cam Alert */
+#custom-cam.recording {
+    background-color: rgba(247, 118, 142, 0.25);
+    color: #f7768e;
+    border: 1px solid #f7768e;
+}

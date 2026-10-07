@@ -112,3 +112,23 @@ hl.window_rule({
 	size = "750 500",
 	center = true,
 })
+
+-- Auto-float Loupe image viewer as a centered preview popup
+hl.window_rule({
+	name = "float-loupe",
+	match = { class = "^(org.gnome.Loupe)$" },
+	float = true,
+	size = "70% 75%",
+	center = true,
+})
+
+-- Camera Preview Popup
+hl.window_rule({
+	name = "float-cam-preview",
+	match = { title = "^(cam-preview)$" },
+	float = true,
+	size = "640 360",
+	center = true,
+	pin = true,
+})
+

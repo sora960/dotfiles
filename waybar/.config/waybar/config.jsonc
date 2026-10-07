@@ -1,0 +1,118 @@
+{
+    "layer": "top",
+    "position": "top",
+    "exclusive": true,
+    "height": 30,
+    "spacing": 4,
+
+    "modules-left": ["cpu", "custom/gpu", "memory", "temperature", "custom/eth", "custom/wifi"],
+    "modules-center": ["clock", "custom/timer"],
+    "modules-right": ["mpris", "pulseaudio", "custom/mic", "custom/mic-test", "custom/cam" ],
+
+    "cpu": {
+        "format": "CPU {usage}%",
+        "interval": 2
+    },
+
+    "memory": {
+        "format": "RAM {percentage}%",
+        "tooltip-format": "{used} / {total}GiB",
+        "interval": 2
+    },
+
+    "temperature": {
+        "hwmon-path": "/sys/class/hwmon/hwmon5/temp1_input",
+        "critical-threshold": 80,
+        "format": " {temperatureC}°C",
+        "format-critical": " {temperatureC}°C",
+        "tooltip": true,
+        "tooltip-format": "CPU Temp: {temperatureC}°C",
+        "interval": 2
+    },
+
+    "clock": {
+        "format": "{:%a %d %b  %H:%M}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+
+    "custom/timer": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "/home/lucy/.config/hypr/scripts/timer.sh status",
+        "on-click": "/home/lucy/.config/hypr/scripts/timer.sh menu",
+        "interval": 1
+    },
+
+    "mpris": {
+        "format": "{title} - {artist}",
+        "format-paused": "{title} - {artist}",
+        "max-length": 50,
+        "tooltip": false,
+        "interval": 2
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "Muted",
+        "format-icons": {
+            "default": ["min", "mid", "max"]
+        },
+        "tooltip": false,
+        "on-click": "pavucontrol"
+    },
+
+    /* --- PERIPHERAL MODULES --- */
+
+    "custom/eth": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "/home/lucy/.config/waybar/scripts/eth-status.sh",
+        "interval": 2,
+        "on-click": "/home/lucy/.config/waybar/scripts/eth-toggle.sh",
+        "on-click-right": "uwsm app -- kitty --class float-term -e nmtui",
+        "tooltip": true
+    },
+
+    "custom/wifi": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "/home/lucy/.config/waybar/scripts/wifi-status.sh",
+        "interval": 2,
+        "on-click": "/home/lucy/.config/waybar/scripts/wifi-toggle.sh",
+        "on-click-right": "/home/lucy/.config/waybar/scripts/wifi-select-rofi.sh",
+        "tooltip": true
+    },
+
+    "custom/mic": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "/home/lucy/.config/waybar/scripts/mic-status.sh",
+        "interval": 1,
+        "tooltip": true,
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
+        "on-click-right": "/home/lucy/.config/waybar/scripts/mic-select-rofi.sh",
+        "on-click-middle": "/home/lucy/.config/waybar/scripts/toggle-mic-filter.sh",
+        "on-scroll-up": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SOURCE@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%-"
+    },
+
+    "custom/mic-test": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "/home/lucy/.config/waybar/scripts/mic-test.sh status",
+        "interval": 1,
+        "on-click": "/home/lucy/.config/waybar/scripts/mic-test.sh record",
+        "on-click-right": "/home/lucy/.config/waybar/scripts/mic-test.sh play",
+        "tooltip": true
+    },
+
+    "custom/cam": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "/home/lucy/.config/waybar/scripts/cam-status.sh",
+        "interval": 1,
+        "on-click": "/home/lucy/.config/waybar/scripts/cam-preview.sh",
+        "tooltip": true
+    }
+
+}
