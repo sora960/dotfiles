@@ -1,0 +1,48 @@
+window,
+.background,
+headerbar,
+.sidebar,
+.view,
+.titlebar,
+notebook,
+menu,
+.menu,
+popover,
+.toolbar,
+textview,
+textview text,
+treeview,
+treeview.view,
+treeview.view text {
+    background-color: #000000;
+    background-image: none;
+}
+
+* {
+    color: #ffffff;
+}
+
+/* Gray Selection Highlight */
+*:selected,
+row:selected,
+treeview:selected,
+iconview:selected,
+.sidebar row:selected,
+.view:selected {
+    background-color: #555555;
+    background-image: none;
+    color: #ffffff;
+}
+
+/* File chooser / portal dialog widgets */
+placessidebar,
+placessidebar.view,
+GtkPlacesSidebar,
+entry,
+button,
+scrolledwindow,
+paned {
+    background-color: #000000;
+    background-image: none;
+    color: #ffffff;
+}

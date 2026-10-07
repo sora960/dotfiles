@@ -1,0 +1,41 @@
+/* Base Backgrounds */
+@define-color window_bg_color #000000;
+@define-color window_fg_color #ffffff;
+@define-color view_bg_color #000000;
+@define-color view_fg_color #ffffff;
+@define-color headerbar_bg_color #000000;
+@define-color headerbar_fg_color #ffffff;
+@define-color sidebar_bg_color #000000;
+@define-color sidebar_fg_color #ffffff;
+@define-color secondary_sidebar_bg_color #000000;
+@define-color secondary_sidebar_fg_color #ffffff;
+@define-color card_bg_color #000000;
+@define-color card_fg_color #ffffff;
+@define-color overview_bg_color #000000;
+@define-color overview_fg_color #ffffff;
+@define-color popover_bg_color #000000;
+@define-color popover_fg_color #ffffff;
+@define-color dialog_bg_color #000000;
+@define-color dialog_fg_color #ffffff;
+
+/* Accent & Selection Highlights (Changed to Gray) */
+@define-color accent_bg_color #555555;
+@define-color accent_color #555555;
+@define-color accent_fg_color #ffffff;
+
+/* Standalone Selection Overrides (Changed to Gray) */
+@define-color theme_selected_bg_color #555555;
+@define-color theme_selected_fg_color #ffffff;
+
+/* File list and sidebar row selection styling */
+treeview:selected,
+treeview cell:selected,
+row:selected,
+listview > row:selected,
+columnview > row:selected,
+columnview cell:selected,
+.navigation-sidebar row:selected {
+    background-color: #555555;
+    background-image: none;
+    color: #ffffff;
+}
