@@ -1,7 +1,7 @@
 -- /home/lucy/.config/hypr/shader.lua
 
 local home = os.getenv("HOME")
-local einkShaderPath = home .. "/dotfiles/hypr/shaders/eink.frag"
+local einkShaderPath = home .. "/.config/hypr/shaders/eink.frag"
 local einkShaderOn = false
 
 local M = {}
